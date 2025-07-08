@@ -1,5 +1,6 @@
 #include "ui/MainWindow.h"
 #include "core/document.h" // 引入Document类的头文件
+#include "ui/EditorWidget.h"
 #include <QPlainTextEdit>
 #include <QAction>
 #include <QMenuBar>
@@ -17,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     //设置窗口大小
     resize(800, 600);
     //创建文本编辑器
-    editor = new QPlainTextEdit(this);
+    editor = new EditorWidget(this);
     //设置布局：QMainWindow有一个特殊的中心区域，把编辑器放进去
     setCentralWidget(editor);
     //创建菜单和动作

@@ -6,7 +6,7 @@
 #include "core/FileManager.h"
 
 //前向声明需要用到的QT类
-class QPlainTextEdit;
+class EditorWidget;
 class QAction;
 class QMenu;
 class Document; // 前向声明Document类，避免包含头文件
@@ -31,7 +31,7 @@ private slots:
 
 private:
     //UI控件指针
-    QPlainTextEdit *editor; // 文本编辑器
+    EditorWidget *editor; // 文本编辑器
     QAction *newAction;     // 新建文件动作
     QAction *openAction;    // 打开文件动作
     QAction *saveAction;    // 保存文件动作
