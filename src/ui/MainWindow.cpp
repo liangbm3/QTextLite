@@ -55,9 +55,7 @@ void MainWindow::createActions()
     //打开文件动作
     openAction = new QAction(tr("&Open..."), this);
     openAction->setShortcut(QKeySequence::Open);
-    // connect(openAction, &QAction::triggered, this, [this]() {
-    //     // 打开文件逻辑
-    // });
+    connect(openAction, &QAction::triggered, this, &MainWindow::openDocument);
 
     //保存文件动作
     saveAction = new QAction(tr("&Save"), this);
@@ -67,6 +65,7 @@ void MainWindow::createActions()
     //另存为文件动作
     saveAsAction = new QAction(tr("Save &As..."), this);
     saveAsAction->setShortcut(QKeySequence::SaveAs);
+    connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveDocumentAs);
 }
 
 //创建菜单
@@ -110,37 +109,26 @@ void MainWindow::newDocument()
     {
         return; // 如果用户选择取消，则不创建新文档
     }
-    //如果当前文档存在，断开与其信号的连接
-    if(m_currentDocument)
-    {
-        disconnect(m_currentDocument, &Document::modificationChanged, this, &MainWindow::onDocumentModified);
-        disconnect(m_currentDocument, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
-    }
-    //在MainWindow的声明周期中删除文档对象，因此需要手动delete
-    if(m_currentDocument)
-    {
-        m_currentDocument->deleteLater();
-    }
-    m_currentDocument = new Document(this); // 创建新的文档对象
-    qDebug() << "Creating new document with file name:" << m_currentDocument->fileName();
-    //将新的文档连接到信号和槽
-    connect(m_currentDocument, &Document::modificationChanged, this, &MainWindow::onDocumentModified);
-    connect(m_currentDocument, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
+    setCurrentDocument(new Document()); // 创建一个新的Document对象
+    qDebug() << "New document created.";
+}
 
-    //当编辑器内容更改时，更新文档内容
-    connect(editor, &QPlainTextEdit::textChanged, this, [this]() {
-        //只有当用户输入内容导致变化时才设置，避免在程序加载内容时触发
-        if(editor->document()->isModified())
-        {
-            qDebug() << "Editor content changed, updating document.";
-            m_currentDocument->setContent(editor->toPlainText());
-        }
-    });
-
-    //重置编辑器内容
-    editor->setPlainText(m_currentDocument->content());
-    //更新窗口标题
-    updateWindowTitle();
+void MainWindow::openDocument()
+{
+    if(!maybeSaveDocument())
+    {
+        return; // 如果用户选择取消，则不打开新文档
+    }
+    Document *doc = m_fileManager.openDocument(); // 使用文件管理器打开文档
+    if(doc)
+    {
+        setCurrentDocument(doc); // 设置当前文档
+        statusBar()->showMessage(tr("Document opened successfully."), 2000); // 显示打开成功信息
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Failed to open document."), 2000); // 显示打开失败信息
+    }
 }
 
 bool MainWindow::saveDocument()
@@ -199,4 +187,36 @@ void MainWindow::onDocumentModified(bool modified)
     qDebug() << "Document modified state changed:" << modified;
     //QT的窗口函数，用来提升文档的修改状态
     setWindowModified(modified);
+}
+
+void MainWindow::setCurrentDocument(Document *document)
+{
+    //如果有旧文档，先断开所有信号连接
+    if (m_currentDocument) {
+        disconnect(m_currentDocument, &Document::modificationChanged, this, &MainWindow::onDocumentModified);
+        disconnect(m_currentDocument, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
+        disconnect(editor,&QPlainTextEdit::textChanged, this, nullptr);
+        m_currentDocument->deleteLater(); // 删除旧文档对象
+    }
+    m_currentDocument = document;
+    m_currentDocument->setParent(this); // 设置父对象为MainWindow
+
+    //将新文档的信号连接到MainWindow的槽
+    connect(m_currentDocument, &Document::modificationChanged, this, &MainWindow::onDocumentModified);
+    connect(m_currentDocument, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
+    connect(editor, &QPlainTextEdit::textChanged, this, [this]() {
+        if (m_currentDocument) {
+            m_currentDocument->setContent(editor->toPlainText());
+        }
+    });
+
+    //清空编辑器之前的修改状态
+    editor->document()->setModified(false);
+    //加载新内容
+    editor->setPlainText(m_currentDocument->content());
+
+    // 更新窗口标题
+    onDocumentModified(m_currentDocument->isModified());
+    updateWindowTitle();
+    qDebug() << "Current document set to:" << m_currentDocument->fileName();
 }

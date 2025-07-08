@@ -24,6 +24,7 @@ protected:
 private slots:
     //槽函数可以连接到动作的信号
     void newDocument(); // 新建文档
+    void openDocument(); // 打开文档
     void onDocumentModified(bool modified);// 文档被修改时的处理函数
     bool saveDocument(); // 保存当前文档
     bool saveDocumentAs(); // 另存为当前文档
@@ -51,6 +52,8 @@ private:
     //检查当前文档是否需要保存，并询问用户，如果用户选择保存、丢弃文档或者无需保存则为true
     //如果用户选择取消，则返回false
     bool maybeSaveDocument();
+
+    void setCurrentDocument(Document *document);
 };
 
 #endif // UI_MAINWINDOW_H
