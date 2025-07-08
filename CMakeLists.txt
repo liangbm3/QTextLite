@@ -21,7 +21,7 @@ set(CMAKE_AUTORCC ON)
 set(CORE_SOURCES
     src/core/Document.cpp
     src/core/FileManager.cpp
-    # src/core/AppSettings.cpp
+    src/core/AppSettings.cpp
 )
 
 set(UI_SOURCES
@@ -49,7 +49,7 @@ set(UI_HEADERS
 set(CORE_HEADERS
     src/core/Document.h
     src/core/FileManager.h
-    # src/core/AppSettings.h
+    src/core/AppSettings.h
 )
 
 
