@@ -27,7 +27,7 @@ set(CORE_SOURCES
 set(UI_SOURCES
     src/ui/MainWindow.cpp
     # src/ui/EditorWidget.cpp
-    # src/ui/widgets/LineNumberArea.cpp
+    src/ui/widgets/LineNumberArea.cpp
     # src/ui/dialogs/FindDialog.cpp
     # src/ui/dialogs/AboutDialog.cpp
     # src/ui/dialogs/SettingsDialog.cpp
@@ -40,7 +40,7 @@ set(SYNTAX_SOURCES
 set(UI_HEADERS
     src/ui/MainWindow.h
     # src/ui/EditorWidget.h
-    # src/ui/widgets/LineNumberArea.h
+    src/ui/widgets/LineNumberArea.h
     # src/ui/dialogs/FindDialog.h
     # src/ui/dialogs/AboutDialog.h
     # src/ui/dialogs/SettingsDialog.h
