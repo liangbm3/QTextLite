@@ -1,0 +1,70 @@
+# Qt/VS/CMake/Windows 常用忽略规则
+# 编译输出
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.obj
+*.o
+*.a
+*.lib
+*.dll
+*.exe
+*.so
+*.moc
+*.user
+*.user.*
+*.autosave
+*.pro.user
+*.qrc.depends
+*.qrc.translations
+*.rcc
+*.app
+*.pch
+*.pdb
+*.ilk
+*.idb
+*.sdf
+*.ipch
+*.aps
+*.ncb
+*.suo
+*.sln
+*.vcxproj*
+*.opensdf
+*.tlog
+*.log
+*.db
+*.pyc
+*.pyo
+*.swp
+*.DS_Store
+*.directory
+*.bak
+*.tmp
+*.old
+*.orig
+*.rej
+*.out
+*.VSCodeCounter*
+# Qt Creator
+.qmake.stash
+*.pro.user*
+*.qbs.user*
+*.qmlproject.user*
+# 自动生成的 Qt 相关文件
+*_autogen/
+# 其他
+.vscode/
+.idea/
+# 备份文件
+*~
+# clangd 索引
+.cache/
+
+.czrc
+
+node_modules/
+package-lock.json
+package.json
