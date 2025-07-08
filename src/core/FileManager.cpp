@@ -1,10 +1,12 @@
 #include "core/FileManager.h"
-#include "core/document.h"
+#include "core/Document.h"
 
 #include <QFile>
 #include <QTextStream>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDir>
+#include <QDebug>
 
 FileManager::FileManager(QWidget *m_parentWidget)
     : m_parentWidget(m_parentWidget)

@@ -1,5 +1,5 @@
 #include "ui/MainWindow.h"
-#include "core/document.h" // 引入Document类的头文件
+#include "core/Document.h" // 引入Document类的头文件
 #include "ui/EditorWidget.h"
 #include "ui/dialogs/FindDialog.h"
 #include <QPlainTextEdit>
@@ -10,6 +10,9 @@
 #include <QStatusBar> //用于显示状态栏信息
 #include <QDebug>
 #include <QMessageBox>
+#include <QCoreApplication>
+#include <QCloseEvent>
+#include <QTextCursor>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -191,9 +194,10 @@ bool MainWindow::saveDocumentAs()
 
 void MainWindow::updateWindowTitle()
 {
-    qDebug() << "Updating window title for document:" << m_currentDocument->fileName();
     if (!m_currentDocument)
         return;
+    
+    qDebug() << "Updating window title for document:" << m_currentDocument->fileName();
     QString title = QString("%1[*] - %2")
                         .arg(m_currentDocument->fileName())
                         .arg(QCoreApplication::applicationName());
@@ -244,8 +248,16 @@ void MainWindow::showFindDialog()
 {
     if (m_findDialog)
     {
+        // 如果编辑器中有选中的文本，自动填充到查找框
+        if (editor->textCursor().hasSelection())
+        {
+            QString selectedText = editor->textCursor().selectedText();
+            m_findDialog->setFindText(selectedText);
+        }
+        
         m_findDialog->show();           // 显示查找对话框
         m_findDialog->activateWindow(); // 确保对话框在前台
+        m_findDialog->focusOnFindLineEdit(); // 聚焦到查找输入框
     }
     else
     {
@@ -255,6 +267,10 @@ void MainWindow::showFindDialog()
 
 void MainWindow::findNext(const QString &str, Qt::CaseSensitivity cs)
 {
+    if (str.isEmpty()) {
+        return;
+    }
+    
     QTextDocument::FindFlags flags; // 查找标志
     if (cs == Qt::CaseSensitive)    // 如果区分大小写
     {
@@ -263,12 +279,27 @@ void MainWindow::findNext(const QString &str, Qt::CaseSensitivity cs)
 
     if (!editor->find(str, flags)) // 如果没找到在状态栏显示结果
     {
-        statusBar()->showMessage(tr("String not found: '%1'").arg(str), 2000);
+        // 如果没找到，尝试从文档开头再找一次
+        QTextCursor cursor = editor->textCursor();
+        cursor.movePosition(QTextCursor::Start);
+        editor->setTextCursor(cursor);
+        
+        if (!editor->find(str, flags)) {
+            statusBar()->showMessage(tr("String not found: '%1'").arg(str), 2000);
+        }
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Found: '%1'").arg(str), 1000);
     }
 }
 
 void MainWindow::findPrevious(const QString &str, Qt::CaseSensitivity cs)
 {
+    if (str.isEmpty()) {
+        return;
+    }
+    
     QTextDocument::FindFlags flags = QTextDocument::FindBackward; // 向上查找
     if (cs == Qt::CaseSensitive)
     {
@@ -277,7 +308,18 @@ void MainWindow::findPrevious(const QString &str, Qt::CaseSensitivity cs)
 
     if (!editor->find(str, flags))
     {
-        statusBar()->showMessage(tr("String not found: '%1'").arg(str), 2000);
+        // 如果没找到，尝试从文档末尾再找一次
+        QTextCursor cursor = editor->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        editor->setTextCursor(cursor);
+        
+        if (!editor->find(str, flags)) {
+            statusBar()->showMessage(tr("String not found: '%1'").arg(str), 2000);
+        }
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Found: '%1'").arg(str), 1000);
     }
 }
 
@@ -288,7 +330,11 @@ void MainWindow::replace(const QString &str)
     {
         return;
     }
-    editor->textCursor().insertText(str); // 替换
+    
+    // 获取当前光标并插入替换文本
+    QTextCursor cursor = editor->textCursor();
+    cursor.insertText(str);
+    
     // 替换后自动查找下一个
     findNext(m_findDialog->findText(),
              m_findDialog->isCaseSensitive() ? Qt::CaseSensitive : Qt::CaseInsensitive);
@@ -296,6 +342,13 @@ void MainWindow::replace(const QString &str)
 
 void MainWindow::replaceAll(const QString &findStr, const QString &replaceStr, Qt::CaseSensitivity cs)
 {
+    if (findStr.isEmpty()) {
+        return;
+    }
+    
+    // 保存当前光标位置
+    QTextCursor originalCursor = editor->textCursor();
+    
     QString text = editor->toPlainText();
     int count = 0;
 
@@ -311,7 +364,14 @@ void MainWindow::replaceAll(const QString &findStr, const QString &replaceStr, Q
         text.replace(findStr, replaceStr, Qt::CaseInsensitive);
     }
 
-    editor->setPlainText(text);
+    if (count > 0) {
+        editor->setPlainText(text);
+        
+        // 尝试恢复光标位置
+        QTextCursor cursor = editor->textCursor();
+        cursor.setPosition(qMin(originalCursor.position(), text.length()));
+        editor->setTextCursor(cursor);
+    }
 
     statusBar()->showMessage(tr("Replaced %1 occurrence(s).").arg(count), 2000);
 }

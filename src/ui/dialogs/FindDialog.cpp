@@ -98,6 +98,7 @@ void FindDialog::onTextChanged()//当输入框内容有变化时
     //如果有内容，则启用查找、替换、替换所有按钮，否则禁用
     bool hasText = !m_findLineEdit->text().isEmpty();
     m_findButton->setEnabled(hasText);
+    m_findPreviousButton->setEnabled(hasText);
     m_replaceButton->setEnabled(hasText);
     m_replaceAllButton->setEnabled(hasText);
 }
@@ -108,4 +109,13 @@ QString FindDialog::findText() const {
 
 bool FindDialog::isCaseSensitive() const {
     return m_caseSensitiveCheckBox->isChecked();
+}
+
+void FindDialog::setFindText(const QString &text) {
+    m_findLineEdit->setText(text);
+}
+
+void FindDialog::focusOnFindLineEdit() {
+    m_findLineEdit->setFocus();
+    m_findLineEdit->selectAll();
 }

@@ -1,5 +1,6 @@
-#include "core/document.h"
+#include "core/Document.h"
 #include <QFileInfo>
+#include <QCoreApplication>
 
 Document::Document(QObject *parent)
     : QObject(parent) {}

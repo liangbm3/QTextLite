@@ -16,6 +16,8 @@ public:
     ~FindDialog();
     QString findText() const;
     bool isCaseSensitive() const;
+    void setFindText(const QString &text);
+    void focusOnFindLineEdit();
 
 signals:
     // 定义信号，用于通知主窗口执行操作
