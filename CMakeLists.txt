@@ -20,7 +20,7 @@ set(CMAKE_AUTORCC ON)
 # 将所有源文件分组，便于管理
 set(CORE_SOURCES
     src/core/Document.cpp
-    # src/core/FileManager.cpp
+    src/core/FileManager.cpp
     # src/core/AppSettings.cpp
 )
 
@@ -48,7 +48,7 @@ set(UI_HEADERS
 
 set(CORE_HEADERS
     src/core/Document.h
-    # src/core/FileManager.h
+    src/core/FileManager.h
     # src/core/AppSettings.h
 )
 
