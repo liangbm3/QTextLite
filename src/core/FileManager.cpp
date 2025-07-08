@@ -24,7 +24,7 @@ bool FileManager::saveDocument(Document *document)
         return false; // 如果文档为空，直接返回失败
     }
     //如果文档没有关联路径，行为等于另存为
-    if(document->fileName().isEmpty()) 
+    if(document->filePath().isEmpty()) 
     {
         return saveDocumentAs(document);
     }
@@ -52,7 +52,7 @@ bool FileManager::saveDocumentAs(Document *document)
 {
     //打开文件对话框让用户选择保存位置
     QString filePath = QFileDialog::getSaveFileName(m_parentWidget, QObject::tr("Save As"),
-                                                    document->filePath(),
+                                                    document->filePath().isEmpty() ? QDir::homePath() : document->filePath(),
                                                     QObject::tr("Text Files (*.txt);;All Files (*)"));
     if (filePath.isEmpty()) 
     {
