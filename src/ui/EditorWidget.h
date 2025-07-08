@@ -10,6 +10,7 @@ class QSize;
 class QWidget;
 
 class LineNumberArea; // 前向声明 LineNumberArea 类
+class QWheelEvent;
 
 class EditorWidget : public QPlainTextEdit
 {
@@ -23,6 +24,12 @@ public:
 protected:
     //重写事件处理函数
     void resizeEvent(QResizeEvent *event) override;
+    //重写鼠标滚轮事件处理函数
+    void wheelEvent(QWheelEvent *event) override;
+public slots:
+    void zoomIn();   //放大字体
+    void zoomOut();  //缩小字体
+    void resetZoom();//用于重置的槽函数
 private slots:
     //行号区域大小改变时的处理函数
     void updateLineNumberAreaWidth(int newBlockCount);
@@ -32,6 +39,7 @@ private slots:
     void highlightCurrentLine();
 private:
     QWidget *m_lineNumberArea; // 行号区域
+    QFont m_defaultFont; // 默认字体
 };
 
 #endif // UI_EDITORWIDGET_H

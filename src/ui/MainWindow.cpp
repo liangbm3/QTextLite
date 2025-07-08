@@ -84,6 +84,21 @@ void MainWindow::createActions()
     findAction = new QAction(tr("&Find..."), this);
     findAction->setShortcut(QKeySequence::Find);
     connect(findAction, &QAction::triggered, this, &MainWindow::showFindDialog);
+
+    // 放大动作
+    zoomInAction = new QAction(tr("Zoom &In"), this);
+    zoomInAction->setShortcut(QKeySequence::ZoomIn);//标准的为Ctrl++
+    connect(zoomInAction, &QAction::triggered, editor, &EditorWidget::zoomIn);
+
+    // 缩小动作
+    zoomOutAction = new QAction(tr("Zoom &Out"), this);
+    zoomOutAction->setShortcut(QKeySequence::ZoomOut);//标准的为Ctrl+-
+    connect(zoomOutAction, &QAction::triggered, editor, &EditorWidget::zoomOut);
+
+    // 重置缩放动作
+    zoomResetAction = new QAction(tr("Reset &Zoom"), this);
+    zoomResetAction->setShortcut(tr("Ctrl+0")); // 设置快捷键为Ctrl+0
+    connect(zoomResetAction, &QAction::triggered, editor, &EditorWidget::resetZoom);
 }
 
 // 创建菜单
@@ -99,6 +114,11 @@ void MainWindow::createMenus()
 
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(findAction); // 添加查找动作
+
+    QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction(zoomInAction); // 添加放大动作
+    viewMenu->addAction(zoomOutAction); // 添加缩小动作
+    viewMenu->addAction(zoomResetAction); // 添加重置缩放动作
 }
 
 bool MainWindow::maybeSaveDocument()

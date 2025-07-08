@@ -45,6 +45,9 @@ private:
     QAction *saveAction;    // 保存文件动作
     QAction *saveAsAction; // 另存为文件动作
     QAction *findAction; // 查找动作
+    QAction *zoomInAction; // 放大动作
+    QAction *zoomOutAction; // 缩小动作
+    QAction *zoomResetAction; // 重置缩放动作
     QMenu *fileMenu;       // 文件菜单
 
     FileManager m_fileManager; // 文件管理器，用于处理文件操作
