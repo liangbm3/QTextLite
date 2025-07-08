@@ -413,7 +413,11 @@ void MainWindow::replaceAll(const QString &findStr, const QString &replaceStr, Q
 void MainWindow::showSettingsDialog()
 {
     SettingsDialog dialog(this);
-    dialog.exec();
+    // 当对话框被接受时，重新应用设置
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        applySettings();
+    }
 }
 
 // 应用设置的中心函数
