@@ -88,7 +88,7 @@ void EditorWidget::highlightCurrentLine()
     if (!isReadOnly())//如果编辑器不是只读状态
     {
         QTextEdit::ExtraSelection selection;//创建一个ExtraSelection对象
-        QColor lineColor = QColor(Qt::yellow).lighter(160); // 设置一个淡黄色的高亮
+        QColor lineColor = QColor(255, 255, 0, 80); // 设置带透明度的淡黄色高亮，80为透明度
 
         selection.format.setBackground(lineColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true); // 整行高亮
