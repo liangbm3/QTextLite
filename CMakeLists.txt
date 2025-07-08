@@ -73,7 +73,7 @@ add_executable(MyTextEditor
     ${CORE_HEADERS}
     ${UI_HEADERS}
     # src/syntax/Highlighter.h
-    # src/utils/Singleton.h
+    src/utils/Singleton.h
 
     ${UI_FILES}
     ${RESOURCE_FILES}
