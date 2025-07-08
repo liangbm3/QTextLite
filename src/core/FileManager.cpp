@@ -62,3 +62,36 @@ bool FileManager::saveDocumentAs(Document *document)
     document->setFilePath(filePath); // 设置新的文件路径
     return saveDocument(document); // 调用保存函数
 }
+
+Document* FileManager::openDocument()
+{
+    QString filePath = QFileDialog::getOpenFileName(m_parentWidget, QObject::tr("Open File"),
+                                                    QDir::homePath(),
+                                                    QObject::tr("Text Files (*.txt);;All Files (*)"));
+    if (filePath.isEmpty()) 
+    {
+        return nullptr; // 用户取消了打开操作
+    }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) // 只读+文本模式打开
+    {
+        QMessageBox::warning(m_parentWidget, QObject::tr("Error"),
+                             QObject::tr("Could not open file %1: %2")
+                             .arg(QDir::toNativeSeparators(filePath), file.errorString()));
+        return nullptr;
+    }
+
+    QTextStream in(&file);
+    QString content = in.readAll();
+    file.close();
+
+    qDebug() << "Opened file" << filePath << "with" << content.length() << "characters.";
+
+    Document *document = new Document();
+    document->setFilePath(filePath);
+    document->setContent(content);
+    document->setModified(false); // 新文档默认未修改
+
+    return document;
+}
