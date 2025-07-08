@@ -37,6 +37,10 @@ private slots:
     void replace(const QString &str);
     void replaceAll(const QString &findStr, const QString &replaceStr, Qt::CaseSensitivity cs);
 
+    //设置相关
+    void showSettingsDialog(); // 显示设置对话框
+    void applySettings();
+
 private:
     //UI控件指针
     EditorWidget *editor; // 文本编辑器
@@ -48,6 +52,7 @@ private:
     QAction *zoomInAction; // 放大动作
     QAction *zoomOutAction; // 缩小动作
     QAction *zoomResetAction; // 重置缩放动作
+    QAction *settingsAction; // 设置动作
     QMenu *fileMenu;       // 文件菜单
 
     FileManager m_fileManager; // 文件管理器，用于处理文件操作

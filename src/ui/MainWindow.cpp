@@ -2,6 +2,8 @@
 #include "core/Document.h" // 引入Document类的头文件
 #include "ui/EditorWidget.h"
 #include "ui/dialogs/FindDialog.h"
+#include "ui/dialogs/SettingsDialog.h"
+#include "core/AppSettings.h"
 #include <QPlainTextEdit>
 #include <QAction>
 #include <QMenuBar>
@@ -39,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_findDialog, &FindDialog::findPrevious, this, &MainWindow::findPrevious);
     connect(m_findDialog, &FindDialog::replace, this, &MainWindow::replace);
     connect(m_findDialog, &FindDialog::replaceAll, this, &MainWindow::replaceAll);
+
+    //应用一次加载好的设置
+    applySettings();
 }
 
 MainWindow::~MainWindow() {}
@@ -99,6 +104,10 @@ void MainWindow::createActions()
     zoomResetAction = new QAction(tr("Reset &Zoom"), this);
     zoomResetAction->setShortcut(tr("Ctrl+0")); // 设置快捷键为Ctrl+0
     connect(zoomResetAction, &QAction::triggered, editor, &EditorWidget::resetZoom);
+
+    //设置动作
+    settingsAction = new QAction(tr("&Settings..."), this);
+    connect(settingsAction, &QAction::triggered, this, &MainWindow::showSettingsDialog);
 }
 
 // 创建菜单
@@ -112,9 +121,13 @@ void MainWindow::createMenus()
     fileMenu->addAction(saveAction);
     fileMenu->addAction(saveAsAction); // 添加另存为动作
 
+    //编辑菜单
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(findAction); // 添加查找动作
+    editMenu->addSeparator(); // 添加分隔符
+    editMenu->addAction(settingsAction); // 添加设置动作
 
+    //查看菜单
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
     viewMenu->addAction(zoomInAction); // 添加放大动作
     viewMenu->addAction(zoomOutAction); // 添加缩小动作
@@ -387,11 +400,30 @@ void MainWindow::replaceAll(const QString &findStr, const QString &replaceStr, Q
     if (count > 0) {
         editor->setPlainText(text);
         
-        // 尝试恢复光标位置
+        // 尝试恢复光标位置，防止越界
+        int pos = qMin(originalCursor.position(), text.length());
         QTextCursor cursor = editor->textCursor();
-        cursor.setPosition(qMin(originalCursor.position(), text.length()));
+        cursor.setPosition(pos);
         editor->setTextCursor(cursor);
     }
 
     statusBar()->showMessage(tr("Replaced %1 occurrence(s).").arg(count), 2000);
+}
+
+void MainWindow::showSettingsDialog()
+{
+    SettingsDialog dialog(this);
+    dialog.exec();
+}
+
+// 应用设置的中心函数
+void MainWindow::applySettings()
+{
+    // 获取设置的字体
+    QFont font = AppSettings::instance().editorFont();
+    // 检查字体是否可用，不可用则降级为默认字体
+    if (!QFontInfo(font).exactMatch() || font.family().isEmpty()) {
+        font = QFont("Consolas"); // 或者 QFont(); 使用系统默认字体
+    }
+    editor->setFont(font);
 }
