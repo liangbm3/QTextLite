@@ -7,6 +7,7 @@
 
 //前向声明需要用到的QT类
 class EditorWidget;
+class FindDialog;
 class QAction;
 class QMenu;
 class Document; // 前向声明Document类，避免包含头文件
@@ -29,6 +30,13 @@ private slots:
     bool saveDocument(); // 保存当前文档
     bool saveDocumentAs(); // 另存为当前文档
 
+    // 用于查找/替换的新增槽函数
+    void showFindDialog();
+    void findNext(const QString &str, Qt::CaseSensitivity cs);
+    void findPrevious(const QString &str, Qt::CaseSensitivity cs);
+    void replace(const QString &str);
+    void replaceAll(const QString &findStr, const QString &replaceStr, Qt::CaseSensitivity cs);
+
 private:
     //UI控件指针
     EditorWidget *editor; // 文本编辑器
@@ -36,11 +44,14 @@ private:
     QAction *openAction;    // 打开文件动作
     QAction *saveAction;    // 保存文件动作
     QAction *saveAsAction; // 另存为文件动作
+    QAction *findAction; // 查找动作
     QMenu *fileMenu;       // 文件菜单
 
     FileManager m_fileManager; // 文件管理器，用于处理文件操作
 
     Document *m_currentDocument=nullptr; // 当前文档对象
+
+    FindDialog *m_findDialog; // 查找对话框
 
     //用于创建UI的私有辅助函数
     void createActions();  // 创建动作
