@@ -30,7 +30,7 @@ set(UI_SOURCES
     src/ui/widgets/LineNumberArea.cpp
     src/ui/dialogs/FindDialog.cpp
     # src/ui/dialogs/AboutDialog.cpp
-    # src/ui/dialogs/SettingsDialog.cpp
+    src/ui/dialogs/SettingsDialog.cpp
 )
 
 set(SYNTAX_SOURCES
@@ -43,7 +43,7 @@ set(UI_HEADERS
     src/ui/widgets/LineNumberArea.h
     src/ui/dialogs/FindDialog.h
     # src/ui/dialogs/AboutDialog.h
-    # src/ui/dialogs/SettingsDialog.h
+    src/ui/dialogs/SettingsDialog.h
 )
 
 set(CORE_HEADERS
